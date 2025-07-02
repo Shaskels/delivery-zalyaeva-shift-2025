@@ -6,8 +6,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetPackageTypesUseCase(private val deliveryRepository: DeliveryRepository) {
-    suspend operator fun invoke(): List<PackageType>{
-        return withContext(Dispatchers.IO){
+    suspend operator fun invoke(): List<PackageType> {
+        return withContext(Dispatchers.IO) {
             deliveryRepository.getPackageTypes()
         }
     }

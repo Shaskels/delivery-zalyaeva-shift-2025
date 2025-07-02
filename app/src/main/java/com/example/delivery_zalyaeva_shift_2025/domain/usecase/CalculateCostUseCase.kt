@@ -5,9 +5,9 @@ import com.example.delivery_zalyaeva_shift_2025.domain.repository.DeliveryReposi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class CalculateCostUseCase (private val deliveryRepository: DeliveryRepository) {
+class CalculateCostUseCase(private val deliveryRepository: DeliveryRepository) {
     suspend operator fun invoke(): Calculation {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             deliveryRepository.getCostCalculation()
         }
     }

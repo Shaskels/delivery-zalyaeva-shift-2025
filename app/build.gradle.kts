@@ -41,6 +41,11 @@ android {
 
 dependencies {
 
+    val koin_version = 4.1
+
+    // Koin for Android
+    implementation("io.insert-koin:koin-android:$koin_version")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
