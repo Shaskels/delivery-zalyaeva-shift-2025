@@ -41,10 +41,10 @@ android {
 
 dependencies {
 
-    val koin_version = 4.1
-
     //koin
-    implementation("io.insert-koin:koin-android:$koin_version")
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.compose)
 
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
