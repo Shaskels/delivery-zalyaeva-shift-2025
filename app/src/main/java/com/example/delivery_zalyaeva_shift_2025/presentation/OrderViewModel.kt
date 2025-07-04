@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,7 @@ class OrderViewModel(
     private val calculateCostUseCase: CalculateCostUseCase
 ) : ViewModel() {
 
-    private val _orderState = MutableStateFlow(Order(null, null, null))
+    private val _orderState = MutableStateFlow(Order(null, null, null,null))
     val orderState: StateFlow<Order> = _orderState.asStateFlow()
 
     private val _deliveryOptions =
@@ -48,6 +49,13 @@ class OrderViewModel(
                 launch { points = getDeliveryPointsUseCase.invoke() },
                 launch { packageType = getPackageTypesUseCase.invoke() }
             ).joinAll()
+            _orderState.update { currentState ->
+                currentState.copy(
+                    senderDelivery = points.firstOrNull(),
+                    receiverDelivery = points.getOrNull(1),
+                    packageType = packageType.firstOrNull(),
+                )
+            }
             _deliveryOptions.value = DeliveryOptionsState.Success(points, packageType)
         }
     }

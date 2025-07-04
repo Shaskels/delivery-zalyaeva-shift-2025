@@ -5,6 +5,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -16,7 +17,7 @@ private const val READ_TIMEOUT = 10L
 
 val networkModule = module {
     single {
-        GsonConverterFactory.create()
+        GsonConverterFactory.create() as Converter.Factory
     }
 
     single(named("logging")) {

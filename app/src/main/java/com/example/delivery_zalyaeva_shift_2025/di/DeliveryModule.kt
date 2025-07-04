@@ -9,13 +9,15 @@ import com.example.delivery_zalyaeva_shift_2025.data.remote.datasource.RemoteDat
 import com.example.delivery_zalyaeva_shift_2025.domain.usecase.GetDeliveryPointsUseCase
 import com.example.delivery_zalyaeva_shift_2025.domain.usecase.GetPackageTypesUseCase
 import com.example.delivery_zalyaeva_shift_2025.domain.usecase.CalculateCostUseCase
+import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
 import org.koin.core.module.dsl.factoryOf
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
 val deliveryModule = module {
-    single { get<Retrofit>().create(DeliveryService::class.java)}
+    single { get<Retrofit>().create(DeliveryService::class.java) }
     factoryOf(::CalculateCostRequestMaker)
     factoryOf(::DeliveryRepositoryImpl) bind DeliveryRepository::class
     factoryOf(::DeliveryRemoteDataSource) bind RemoteDataSource::class
@@ -23,4 +25,6 @@ val deliveryModule = module {
     factoryOf(::GetDeliveryPointsUseCase)
     factoryOf(::GetPackageTypesUseCase)
     factoryOf(::CalculateCostUseCase)
+
+    viewModelOf(::OrderViewModel)
 }

@@ -5,6 +5,8 @@
     <string name="calculete_delivery_title">Рассчитать доставку</string>
     <string name="sender_city">Город отправки</string>
     <string name="sender_city_hint">Москва</string>
+    <string name="receiver_city_hint">Санкт-Петербург</string>
+    <string name= "package_type_hint">Конверт</string>
     <string name="receiver_city">Город назначения</string>
     <string name="package_size">Размер посылки</string>
     <string name="calculate_button">Рассчитать</string>

@@ -1,10 +1,9 @@
-package com.example.delivery_zalyaeva_shift_2025
+package com.example.delivery_zalyaeva_shift_2025.ui.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.CalculateDeliveryScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +12,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             DeliveryTheme {
-                CalculateDeliveryScreen()
+                DeliveryApp()
             }
         }
     }

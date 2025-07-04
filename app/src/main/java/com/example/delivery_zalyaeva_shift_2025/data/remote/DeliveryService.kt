@@ -10,12 +10,12 @@ import retrofit2.http.POST
 
 interface DeliveryService {
 
-    @GET("/points")
+    @GET("points")
     suspend fun getDeliveryPoints(): DeliveryPointsResponse
 
-    @GET("/package/types")
+    @GET("package/types")
     suspend fun getPackageTypes(): PackageTypesResponse
 
-    @POST("/calc")
+    @POST("calc")
     suspend fun getCostCalculation(@Body calculateCostRequest: CalculateCostRequest): CalculateCostResponse
 }
