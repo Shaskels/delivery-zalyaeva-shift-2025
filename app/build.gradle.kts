@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.delivery_zalyaeva_shift_2025"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.delivery_zalyaeva_shift_2025"

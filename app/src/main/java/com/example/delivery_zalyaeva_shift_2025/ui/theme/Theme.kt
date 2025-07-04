@@ -1,58 +1,171 @@
 package com.example.delivery_zalyaeva_shift_2025.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+private val DarkColorScheme = DeliveryColors(
+    backgroundPrimary = BackgroundPrimary,
+    backgroundSecondary = BackgroundSecondary,
+    backgroundTertiary = BackgroundTertiary,
+    backgroundDisable = BackgroundDisable,
+    textPrimary = TextPrimary,
+    textSecondary = TextSecondary,
+    textTertiary = TextTertiary,
+    textQuartenery = TextQuartenery,
+    textInvert = TextInvert,
+    textError = TextError,
+    borderExtraLight = BorderExtraLight,
+    borderLight = BorderLight,
+    borderMedium = BorderMedium,
+    indicatorWhite = IndicatorWhite,
+    indicatorLight = IndicatorLight,
+    indicatorMedium = IndicatorMedium,
+    indicatorNormal = IndicatorNormal,
+    indicatorError = IndicatorError,
+    indicatorAttention = IndicatorAttention,
+    indicatorPositive = IndicatorPositive,
+    backgroundBrand = BackgroundBrand,
+    backgroundPressedPrimary = BackgroundPressedPrimary,
+    backgroundBrandExtraLight = BackgroundBrandExtraLight,
+    backgroundHoverPrimary = BackgroundHoverPrimary,
+    textBrandDisables = TextBrandDisabled,
+    indicatorFocused = IndicatorFocused,
+    indicatorFocusedAlternative = IndicatorFocusedAlternative
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val LightColorScheme = DeliveryColors(
+    backgroundPrimary = BackgroundPrimary,
+    backgroundSecondary = BackgroundSecondary,
+    backgroundTertiary = BackgroundTertiary,
+    backgroundDisable = BackgroundDisable,
+    textPrimary = TextPrimary,
+    textSecondary = TextSecondary,
+    textTertiary = TextTertiary,
+    textQuartenery = TextQuartenery,
+    textInvert = TextInvert,
+    textError = TextError,
+    borderExtraLight = BorderExtraLight,
+    borderLight = BorderLight,
+    borderMedium = BorderMedium,
+    indicatorWhite = IndicatorWhite,
+    indicatorLight = IndicatorLight,
+    indicatorMedium = IndicatorMedium,
+    indicatorNormal = IndicatorNormal,
+    indicatorError = IndicatorError,
+    indicatorAttention = IndicatorAttention,
+    indicatorPositive = IndicatorPositive,
+    backgroundBrand = BackgroundBrand,
+    backgroundPressedPrimary = BackgroundPressedPrimary,
+    backgroundBrandExtraLight = BackgroundBrandExtraLight,
+    backgroundHoverPrimary = BackgroundHoverPrimary,
+    textBrandDisables = TextBrandDisabled,
+    indicatorFocused = IndicatorFocused,
+    indicatorFocusedAlternative = IndicatorFocusedAlternative
 )
 
 @Composable
-fun Deliveryzalyaevashift2025Theme(
+fun DeliveryTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    val colors = if (darkTheme) DarkColorScheme else LightColorScheme
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    ProvideDeliveryColors(colors) {
+        MaterialTheme(
+            colorScheme = debugColors(darkTheme),
+            typography = Typography,
+            content = content
+        )
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
 }
+
+object DeliveryTheme {
+    val colors: DeliveryColors
+        @Composable
+        get() = LocalDeliveryColors.current
+}
+
+@Immutable
+data class DeliveryColors(
+    val backgroundPrimary: Color,
+    val backgroundSecondary: Color,
+    val backgroundTertiary: Color,
+    val backgroundDisable: Color,
+    val textPrimary: Color,
+    val textSecondary: Color,
+    val textTertiary: Color,
+    val textQuartenery: Color,
+    val textInvert: Color,
+    val textError: Color,
+    val borderExtraLight: Color,
+    val borderLight: Color,
+    val borderMedium: Color,
+    val indicatorWhite: Color,
+    val indicatorLight: Color,
+    val indicatorMedium: Color,
+    val indicatorNormal: Color,
+    val indicatorError: Color,
+    val indicatorAttention: Color,
+    val indicatorPositive: Color,
+    val backgroundBrand: Color,
+    val backgroundPressedPrimary: Color,
+    val backgroundHoverPrimary: Color,
+    val backgroundBrandExtraLight: Color,
+    val textBrandDisables: Color,
+    val indicatorFocused: Color,
+    val indicatorFocusedAlternative: Color,
+)
+
+@Composable
+fun ProvideDeliveryColors(colors: DeliveryColors, content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalDeliveryColors provides colors, content = content)
+}
+
+private val LocalDeliveryColors = staticCompositionLocalOf<DeliveryColors> {
+    error("No DeliveryColorPalette provided")
+}
+
+fun debugColors(darkTheme: Boolean, debugColor: Color = Color.Magenta) = ColorScheme(
+    primary = debugColor,
+    onPrimary = debugColor,
+    primaryContainer = debugColor,
+    onPrimaryContainer = debugColor,
+    inversePrimary = debugColor,
+    secondary = debugColor,
+    onSecondary = debugColor,
+    secondaryContainer = debugColor,
+    onSecondaryContainer = debugColor,
+    tertiary = debugColor,
+    onTertiary = debugColor,
+    tertiaryContainer = debugColor,
+    onTertiaryContainer = debugColor,
+    background = debugColor,
+    onBackground = debugColor,
+    surface = debugColor,
+    onSurface = debugColor,
+    surfaceVariant = debugColor,
+    onSurfaceVariant = debugColor,
+    surfaceTint = debugColor,
+    inverseSurface = debugColor,
+    inverseOnSurface = debugColor,
+    error = debugColor,
+    onError = debugColor,
+    errorContainer = debugColor,
+    onErrorContainer = debugColor,
+    outline = debugColor,
+    outlineVariant = debugColor,
+    scrim = debugColor,
+    surfaceBright = debugColor,
+    surfaceDim = debugColor,
+    surfaceContainer = debugColor,
+    surfaceContainerHigh = debugColor,
+    surfaceContainerHighest = debugColor,
+    surfaceContainerLow = debugColor,
+    surfaceContainerLowest = debugColor,
+)
