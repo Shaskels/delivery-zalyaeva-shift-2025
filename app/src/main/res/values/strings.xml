@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">delivery-zalyaeva-shift-2025</string>
+    <string name="calculate_delivery_screen_header">Мы доставим ваш заказ</string>
+    <string name="calculete_delivery_screen_postheader">Отправляйте посылки в приложении Шифт Delivery</string>
+    <string name="calculete_delivery_title">Рассчитать доставку</string>
+    <string name="sender_city">Город отправки</string>
+    <string name="sender_city_hint">Москва</string>
+    <string name="receiver_city_hint">Санкт-Петербург</string>
+    <string name= "package_type_hint">Конверт</string>
+    <string name="receiver_city">Город назначения</string>
+    <string name="package_size">Размер посылки</string>
+    <string name="calculate_button">Рассчитать</string>
+    <string name="track_package_title">Отследить посылку</string>
+    <string name="find_package_button">Найти</string>
+    <string name="order_number">Номер заказа</string>
 </resources>
