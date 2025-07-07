@@ -15,4 +15,15 @@
     <string name="order_number">Номер заказа</string>
     <string name="delivery_points_from">Откуда</string>
     <string name="delivery_points_where">Куда</string>
+    <string name="delivery_type_title">Способ отправки</string>
+    <string name="step">Шаг</string>
+    <string name="step_of">из</string>
+    <string name="work_day">Рабочий день</string>
+
+    <plurals name="numberOfDays">
+        <item quantity="zero">%d рабочих дней</item>
+        <item quantity="one">%d рабочий день</item>
+        <item quantity="few">%d рабочих дня</item>
+        <item quantity="other">%d рабочих дней</item>
+    </plurals>
 </resources>

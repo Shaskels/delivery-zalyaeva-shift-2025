@@ -20,7 +20,7 @@ val networkModule = module {
         GsonConverterFactory.create() as Converter.Factory
     }
 
-    single(named("logging")) {
+    single {
         HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }

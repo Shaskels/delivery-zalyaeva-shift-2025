@@ -6,6 +6,6 @@ import com.example.delivery_zalyaeva_shift_2025.domain.entity.PackageType
 sealed interface DeliveryOptionsState {
     data object Error : DeliveryOptionsState
     data object Loading : DeliveryOptionsState
-    data class Success(val points: List<DeliveryPoint>, val packageTypes: List<PackageType>) :
+    data class Content(val points: List<DeliveryPoint>, val packageTypes: List<PackageType>) :
         DeliveryOptionsState
 }

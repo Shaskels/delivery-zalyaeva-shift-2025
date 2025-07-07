@@ -18,7 +18,7 @@ import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
 @Composable
 fun BrandButton(text: String, onClick: () -> Unit){
     Button(
-        onClick = {onClick()},
+        onClick = onClick,
         modifier = Modifier
             .padding(top = 24.dp)
             .fillMaxWidth(),
