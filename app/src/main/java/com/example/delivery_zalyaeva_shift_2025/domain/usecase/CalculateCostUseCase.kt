@@ -12,9 +12,5 @@ class CalculateCostUseCase (private val deliveryRepository: DeliveryRepository) 
         packageType: PackageType,
         senderPoint: DeliveryPoint,
         receiverPoint: DeliveryPoint
-    ): List<Calculation> {
-        return withContext(Dispatchers.IO){
-            deliveryRepository.getCostCalculation(packageType, senderPoint, receiverPoint)
-        }
-    }
+    ): List<Calculation> = deliveryRepository.getCostCalculation(packageType, senderPoint, receiverPoint)
 }

@@ -1,5 +1,6 @@
 package com.example.delivery_zalyaeva_shift_2025.data.remote.datasource
 
+import android.util.Log
 import com.example.delivery_zalyaeva_shift_2025.data.remote.DeliveryService
 import com.example.delivery_zalyaeva_shift_2025.data.remote.entity.CalculateCostRequest
 import com.example.delivery_zalyaeva_shift_2025.data.remote.entity.CalculationModel
@@ -16,6 +17,10 @@ class DeliveryRemoteDataSource (private val deliveryService: DeliveryService): R
     }
 
     override suspend fun getCostCalculation(calculateCostRequest: CalculateCostRequest): List<CalculationModel> {
-        return deliveryService.getCostCalculation(calculateCostRequest).options
+        val calculateCostResponse = deliveryService.getCostCalculation(calculateCostRequest)
+        if (!calculateCostResponse.success){
+            Log.e("DeliveryRemoteDataSource", calculateCostResponse.reason)
+        }
+        return calculateCostResponse.options
     }
 }

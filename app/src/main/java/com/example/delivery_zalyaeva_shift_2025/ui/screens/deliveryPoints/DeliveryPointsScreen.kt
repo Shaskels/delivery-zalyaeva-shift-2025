@@ -1,22 +1,17 @@
-package com.example.delivery_zalyaeva_shift_2025.ui.screens
+package com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +31,9 @@ fun DeliveryPointsScreen(
     onCancelAction: () -> Unit,
     onDeliveryPointClick: () -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(DeliveryTheme.colors.backgroundPrimary)) {
         DeliveryTopAppBar(
             title = when (deliveryPoints.deliveryPointsType) {
                 DeliveryPointType.RECEIVER_DELIVERY -> stringResource(R.string.delivery_points_where)
@@ -45,6 +42,7 @@ fun DeliveryPointsScreen(
             icon = painterResource(R.drawable.ic_left),
             onIconClick = { onCancelAction() }
         )
+
         DeliveryPointsList(deliveryPoints, viewModel, onDeliveryPointClick)
     }
 }
@@ -55,10 +53,7 @@ fun DeliveryPointsList(
     viewModel: OrderViewModel,
     onDeliveryPointClick: () -> Unit
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .background(DeliveryTheme.colors.backgroundPrimary)
-    ) {
+    LazyColumn {
         items(deliveryPoints.deliveryPoints) { item ->
             DeliveryPointItem(item, {
                 when (deliveryPoints.deliveryPointsType) {
@@ -92,6 +87,7 @@ fun DeliveryPointItem(
                 .weight(1f)
                 .align(Alignment.CenterVertically)
         )
+
         Icon(
             painter = painterResource(R.drawable.arrow_small_right),
             contentDescription = null,

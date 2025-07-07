@@ -38,6 +38,7 @@ private val DarkColorScheme = DeliveryColors(
     indicatorFocused = IndicatorFocused,
     indicatorFocusedAlternative = IndicatorFocusedAlternative,
     backgroundOverlay = BackgroundOverlay,
+    backgroundLight = BackgroundLight
 )
 
 private val LightColorScheme = DeliveryColors(
@@ -69,6 +70,7 @@ private val LightColorScheme = DeliveryColors(
     indicatorFocused = IndicatorFocused,
     indicatorFocusedAlternative = IndicatorFocusedAlternative,
     backgroundOverlay = BackgroundOverlay,
+    backgroundLight = BackgroundLight,
 )
 
 @Composable
@@ -123,6 +125,7 @@ data class DeliveryColors(
     val indicatorFocused: Color,
     val indicatorFocusedAlternative: Color,
     val backgroundOverlay: Color,
+    val backgroundLight: Color
 )
 
 @Composable

@@ -1,4 +1,4 @@
-package com.example.delivery_zalyaeva_shift_2025.ui.screens
+package com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints
 
 import android.os.Parcelable
 import com.example.delivery_zalyaeva_shift_2025.domain.entity.DeliveryPoint

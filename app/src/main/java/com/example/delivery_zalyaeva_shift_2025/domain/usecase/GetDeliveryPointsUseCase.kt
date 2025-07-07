@@ -6,9 +6,5 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class GetDeliveryPointsUseCase(private val deliveryRepository: DeliveryRepository) {
-    suspend operator fun invoke(): List<DeliveryPoint>{
-        return withContext(Dispatchers.IO){
-            deliveryRepository.getDeliveryPoints()
-        }
-    }
+    suspend operator fun invoke(): List<DeliveryPoint> = deliveryRepository.getDeliveryPoints()
 }

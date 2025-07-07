@@ -35,6 +35,7 @@ fun Picker(
             color = DeliveryTheme.colors.textSecondary,
             style = MaterialTheme.typography.labelMedium
         )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -54,6 +55,7 @@ fun Picker(
                 modifier = Modifier
                     .padding(end = 2.dp)
             )
+
             Text(
                 hint,
                 modifier = Modifier
@@ -61,6 +63,7 @@ fun Picker(
                 color = DeliveryTheme.colors.textSecondary,
                 style = MaterialTheme.typography.labelLarge
             )
+
             Icon(
                 painter = painterResource(R.drawable.chevron_down),
                 contentDescription = null,

@@ -3,37 +3,29 @@ package com.example.delivery_zalyaeva_shift_2025.ui.main
 import android.net.Uri
 import android.os.Bundle
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.example.delivery_zalyaeva_shift_2025.R
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.CalculateDeliveryRoute
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.CalculateDeliveryScreen
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.DeliveryPoints
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.DeliveryPointsRoute
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.DeliveryPointsScreen
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery.CalculateDeliveryRoute
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery.CalculateDeliveryScreen
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPoints
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPointsRoute
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPointsScreen
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryType.DeliveryTypeRoute
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryType.DeliveryTypeScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -47,6 +39,10 @@ fun DeliveryApp(
 ) {
     val navController = rememberNavController()
 
+    LaunchedEffect(key1 = Unit) {
+        orderViewModel.getDeliveryOptions()
+    }
+
     Scaffold(
         containerColor = DeliveryTheme.colors.backgroundPrimary
     ) { paddingValues: PaddingValues ->
@@ -58,22 +54,32 @@ fun DeliveryApp(
             ) {
                 animatedComposable<CalculateDeliveryRoute> {
                     CalculateDeliveryScreen(
-                        orderViewModel,
+                        orderViewModel = orderViewModel,
                         onSelectDeliveryPointClick = { deliveryPointsType, deliveryPoints ->
                             navController.navigate(
                                 DeliveryPointsRoute(
                                     DeliveryPoints(deliveryPointsType, deliveryPoints)
                                 )
                             )
-                        })
+                        },
+                        onCalculateClick = { navController.navigate(DeliveryTypeRoute) }
+                    )
                 }
+
                 animatedComposable<DeliveryPointsRoute>(mapOf(typeOf<DeliveryPoints>() to DeliveryPointsType)) {
                     val destination = it.toRoute<DeliveryPointsRoute>()
                     DeliveryPointsScreen(
                         deliveryPoints = destination.deliveryPoints,
-                        orderViewModel,
+                        viewModel = orderViewModel,
                         onCancelAction = { navController.navigateUp() },
                         onDeliveryPointClick = { navController.navigateUp() }
+                    )
+                }
+
+                animatedComposable<DeliveryTypeRoute>{
+                    DeliveryTypeScreen(
+                        viewModel = orderViewModel,
+                        onCancelAction = { navController.navigateUp() }
                     )
                 }
             }
