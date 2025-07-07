@@ -59,4 +59,28 @@ class OrderViewModel(
             _deliveryOptions.value = DeliveryOptionsState.Success(points, packageType)
         }
     }
+
+    fun setSenderDeliveryPoint(deliveryPoint: DeliveryPoint){
+        _orderState.update { currentState ->
+            currentState.copy(
+                senderDelivery = deliveryPoint
+            )
+        }
+    }
+
+    fun setReceiverDeliveryPoint(deliveryPoint: DeliveryPoint){
+        _orderState.update {currentState ->
+            currentState.copy(
+                receiverDelivery = deliveryPoint
+            )
+        }
+    }
+
+    fun setPackageType(packageType: PackageType){
+        _orderState.update { currentState ->
+            currentState.copy(
+                packageType = packageType
+            )
+        }
+    }
 }

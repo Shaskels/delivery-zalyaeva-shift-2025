@@ -36,7 +36,8 @@ private val DarkColorScheme = DeliveryColors(
     backgroundHoverPrimary = BackgroundHoverPrimary,
     textBrandDisables = TextBrandDisabled,
     indicatorFocused = IndicatorFocused,
-    indicatorFocusedAlternative = IndicatorFocusedAlternative
+    indicatorFocusedAlternative = IndicatorFocusedAlternative,
+    backgroundOverlay = BackgroundOverlay,
 )
 
 private val LightColorScheme = DeliveryColors(
@@ -66,7 +67,8 @@ private val LightColorScheme = DeliveryColors(
     backgroundHoverPrimary = BackgroundHoverPrimary,
     textBrandDisables = TextBrandDisabled,
     indicatorFocused = IndicatorFocused,
-    indicatorFocusedAlternative = IndicatorFocusedAlternative
+    indicatorFocusedAlternative = IndicatorFocusedAlternative,
+    backgroundOverlay = BackgroundOverlay,
 )
 
 @Composable
@@ -120,6 +122,7 @@ data class DeliveryColors(
     val textBrandDisables: Color,
     val indicatorFocused: Color,
     val indicatorFocusedAlternative: Color,
+    val backgroundOverlay: Color,
 )
 
 @Composable
