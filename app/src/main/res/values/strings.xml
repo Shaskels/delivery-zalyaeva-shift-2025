@@ -13,4 +13,6 @@
     <string name="track_package_title">Отследить посылку</string>
     <string name="find_package_button">Найти</string>
     <string name="order_number">Номер заказа</string>
+    <string name="delivery_points_from">Откуда</string>
+    <string name="delivery_points_where">Куда</string>
 </resources>
