@@ -80,6 +80,13 @@ val Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp,
+    ),
+    headlineSmall = TextStyle(
+        fontFamily = interFontFamily,
+        fontWeight = FontWeight.W400,
+        fontSize = 10.sp,
+        lineHeight = 12.sp,
+        letterSpacing = 0.sp,
     )
 )
 

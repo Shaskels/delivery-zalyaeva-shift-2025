@@ -1,6 +1,5 @@
 package com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryType
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,8 +35,9 @@ import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryCalculation
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
 import com.example.delivery_zalyaeva_shift_2025.ui.components.Banner
 import com.example.delivery_zalyaeva_shift_2025.ui.components.DeliveryTopAppBar
-import com.example.delivery_zalyaeva_shift_2025.ui.components.LoadingScreen
+import com.example.delivery_zalyaeva_shift_2025.ui.components.ErrorScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.components.OrderProgressBar
+import com.example.delivery_zalyaeva_shift_2025.ui.components.shimmerLoading
 import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
 
 private const val STEP_NUMBER = 1
@@ -51,56 +52,84 @@ fun DeliveryTypeScreen(
         DeliveryCalculationsState.Loading
     )
 
-    when (val currentState = deliveryCalculationsState) {
-        is DeliveryCalculationsState.Loading -> LoadingScreen()
-        is DeliveryCalculationsState.Error -> Log.e("DeliveryTypeScreen", "")
-        is DeliveryCalculationsState.Content -> DeliveryType(
-            viewModel = viewModel,
-            currentState.calculations,
-            onCancelAction = onCancelAction
-        )
-    }
-
-}
-
-@Composable
-fun DeliveryType(
-    viewModel: OrderViewModel,
-    calculations: List<Calculation>,
-    onCancelAction: () -> Unit,
-) {
     Column(modifier = Modifier.fillMaxSize()) {
-
         DeliveryTopAppBar(
             title = stringResource(R.string.delivery_type_title),
             icon = painterResource(R.drawable.ic_left),
             onIconClick = { onCancelAction() }
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 24.dp)
-                .background(DeliveryTheme.colors.backgroundPrimary)
-                .padding(horizontal = 16.dp)
-        ) {
-
-            OrderProgressBar(
-                step = STEP_NUMBER,
-                numberOfSteps = NUMBER_OF_STEPS,
+        when (val currentState = deliveryCalculationsState) {
+            is DeliveryCalculationsState.Loading -> DeliveryType(
+                isLoading = true,
+                viewModel = viewModel,
+                emptyList(),
             )
+            is DeliveryCalculationsState.Error -> ErrorScreen(stringResource(R.string.something_went_wrong)) { viewModel.getDeliveryCalculations() }
+            is DeliveryCalculationsState.Content -> DeliveryType(
+                isLoading = false,
+                viewModel = viewModel,
+                currentState.calculations,
+            )
+        }
+    }
 
+}
+
+@Composable
+fun DeliveryType(
+    isLoading: Boolean,
+    viewModel: OrderViewModel,
+    calculations: List<Calculation>,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 24.dp)
+            .background(DeliveryTheme.colors.backgroundPrimary)
+            .padding(horizontal = 16.dp)
+    ) {
+
+        OrderProgressBar(
+            step = STEP_NUMBER,
+            numberOfSteps = NUMBER_OF_STEPS,
+        )
+
+        if (!isLoading) {
             LazyColumn(modifier = Modifier.padding(bottom = 24.dp)) {
                 items(calculations) { item ->
                     CalculationItem(
                         item,
-                        onItemClick = { deliveryType -> viewModel.setDeliveryType(deliveryType) })
+                        onItemClick = { deliveryType ->
+                            viewModel.setDeliveryType(
+                                deliveryType
+                            )
+                        }
+                    )
                 }
             }
-
-            Banner(banner = painterResource(R.drawable.banner2))
+        } else {
+            Column(modifier = Modifier.padding(bottom = 24.dp)) {
+                repeat(2) {
+                    CalculationItemHolder()
+                }
+            }
         }
+
+        Banner(banner = painterResource(R.drawable.banner2))
     }
+}
+
+@Composable
+fun CalculationItemHolder() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp)
+            .height(120.dp)
+            .clip(shape = RoundedCornerShape(24.dp))
+            .shimmerLoading()
+    )
 }
 
 @Composable
@@ -135,6 +164,7 @@ fun CalculationItem(item: Calculation, onItemClick: (DeliveryType) -> Unit) {
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
+
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -146,18 +176,21 @@ fun CalculationItem(item: Calculation, onItemClick: (DeliveryType) -> Unit) {
                     color = DeliveryTheme.colors.textTertiary,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
+
                 Text(
                     "${item.price} ₽",
                     style = MaterialTheme.typography.bodyMedium,
                     color = DeliveryTheme.colors.textPrimary,
                     modifier = Modifier.padding(bottom = 24.dp)
                 )
+
                 Text(
                     pluralStringResource(R.plurals.numberOfDays, item.days, item.days),
                     style = MaterialTheme.typography.bodySmall,
                     color = DeliveryTheme.colors.textTertiary,
                 )
             }
+
             Icon(
                 painter = painterResource(R.drawable.arrow_small_right),
                 contentDescription = null,
