@@ -19,6 +19,12 @@
     <string name="step">Шаг</string>
     <string name="step_of">из</string>
     <string name="work_day">Рабочий день</string>
+    <string name="error_title">Ошибка</string>
+    <string name="error_try_again">Повторить</string>
+    <string name="something_went_wrong">Что-то пошло не так</string>
+    <string name="calculation">Расчёт</string>
+    <string name="history">История</string>
+    <string name="profile">Профиль</string>
 
     <plurals name="numberOfDays">
         <item quantity="zero">%d рабочих дней</item>

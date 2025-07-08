@@ -28,6 +28,7 @@ fun Picker(
     icon: Painter,
     onClick: () -> Unit,
     variants: List<String>? = null,
+    onVariantClick: ((Int) -> Unit)? = null
 ) {
     Column(Modifier.fillMaxWidth()) {
         Text(
@@ -59,7 +60,8 @@ fun Picker(
             Text(
                 hint,
                 modifier = Modifier
-                    .align(Alignment.CenterVertically).weight(1f),
+                    .align(Alignment.CenterVertically)
+                    .weight(1f),
                 color = DeliveryTheme.colors.textSecondary,
                 style = MaterialTheme.typography.labelLarge
             )
@@ -73,22 +75,24 @@ fun Picker(
                     .clickable { onClick() }
             )
         }
-        if (variants != null ) {
-            CommonVariantsPicker(variants)
+        if (variants != null && onVariantClick != null) {
+            CommonVariantsPicker(variants, onVariantClick)
         }
     }
 }
 
 @Composable
-fun CommonVariantsPicker(variants: List<String>) {
+fun CommonVariantsPicker(variants: List<String>, onVariantClick: (Int) -> Unit) {
     Row(modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)) {
-        for (element in variants) {
+        variants.forEachIndexed { index, variant ->
             Text(
-                element,
+                variant,
                 color = DeliveryTheme.colors.textTertiary,
                 textDecoration = TextDecoration.Underline,
                 style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .clickable { onVariantClick(index) }
             )
         }
     }

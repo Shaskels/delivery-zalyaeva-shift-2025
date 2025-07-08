@@ -2,14 +2,28 @@ package com.example.delivery_zalyaeva_shift_2025.ui.main
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -18,7 +32,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.delivery_zalyaeva_shift_2025.R
+import com.example.delivery_zalyaeva_shift_2025.presentation.OrderFindViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.history.HistoryRoute
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.profile.ProfileRoute
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery.CalculateDeliveryRoute
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery.CalculateDeliveryScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPoints
@@ -26,6 +46,8 @@ import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.Delive
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPointsScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryType.DeliveryTypeRoute
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryType.DeliveryTypeScreen
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.history.HistoryScreen
+import com.example.delivery_zalyaeva_shift_2025.ui.screens.profile.ProfileScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -35,12 +57,23 @@ import kotlin.reflect.typeOf
 
 @Composable
 fun DeliveryApp(
-    orderViewModel: OrderViewModel = koinViewModel()
+    orderViewModel: OrderViewModel = koinViewModel(),
+    orderFindViewModel: OrderFindViewModel = koinViewModel(),
 ) {
     val navController = rememberNavController()
+    val selectedTab = rememberSaveable { mutableStateOf(NavigationOptions.CALCULATE_DELIVERY) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     LaunchedEffect(key1 = Unit) {
         orderViewModel.getDeliveryOptions()
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val openedOption =
+                NavigationOptions.entries.firstOrNull { destination.hasRoute(it.route) }
+
+            if (openedOption != null) {
+                selectedTab.value = openedOption
+            }
+        }
     }
 
     Scaffold(
@@ -55,6 +88,7 @@ fun DeliveryApp(
                 animatedComposable<CalculateDeliveryRoute> {
                     CalculateDeliveryScreen(
                         orderViewModel = orderViewModel,
+                        orderFindViewModel = orderFindViewModel,
                         onSelectDeliveryPointClick = { deliveryPointsType, deliveryPoints ->
                             navController.navigate(
                                 DeliveryPointsRoute(
@@ -76,12 +110,46 @@ fun DeliveryApp(
                     )
                 }
 
-                animatedComposable<DeliveryTypeRoute>{
+                animatedComposable<DeliveryTypeRoute> {
                     DeliveryTypeScreen(
                         viewModel = orderViewModel,
                         onCancelAction = { navController.navigateUp() }
                     )
                 }
+
+                animatedComposable<ProfileRoute> {
+                    ProfileScreen()
+                }
+
+                animatedComposable<HistoryRoute> {
+                    HistoryScreen()
+                }
+            }
+
+            val currentDestination = navBackStackEntry?.destination
+            val openedOption =
+                NavigationOptions.entries.firstOrNull { currentDestination?.hasRoute(it.route) == true }
+            if (openedOption != null) {
+                BottomNavigation(
+                    navigationOptions = NavigationOptions.entries,
+                    selectedNavigationOption = selectedTab.value,
+                    onItemClicked = { navOption ->
+                        when (navOption) {
+                            NavigationOptions.CALCULATE_DELIVERY -> navController.openPoppingAllPrevious(
+                                CalculateDeliveryRoute
+                            )
+
+                            NavigationOptions.PROFILE -> navController.openPoppingAllPrevious(
+                                ProfileRoute
+                            )
+
+                            NavigationOptions.HISTORY -> navController.openPoppingAllPrevious(
+                                HistoryRoute
+                            )
+                        }
+                        selectedTab.value = navOption
+                    }
+                )
             }
         }
     }
@@ -100,6 +168,59 @@ inline fun <reified T : Any> NavGraphBuilder.animatedComposable(
         content = block
     )
 }
+
+@Composable
+private fun BottomNavigation(
+    navigationOptions: List<NavigationOptions>,
+    selectedNavigationOption: NavigationOptions,
+    onItemClicked: (NavigationOptions) -> Unit,
+) {
+    NavigationBar(
+        containerColor = DeliveryTheme.colors.backgroundPrimary,
+        contentColor = DeliveryTheme.colors.borderMedium,
+    ) {
+        for (option in navigationOptions) {
+            NavigationBarItem(
+                selected = selectedNavigationOption == option,
+                onClick = { onItemClicked(option) },
+                icon = { Icon(painter = getIcon(option), "", modifier = Modifier.padding(0.dp)) },
+                label = {
+                    Text(
+                        text = getLabel(option),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
+                colors = NavigationBarItemColors(
+                    selectedIconColor = DeliveryTheme.colors.backgroundBrand,
+                    selectedTextColor = DeliveryTheme.colors.backgroundBrand,
+                    selectedIndicatorColor = DeliveryTheme.colors.backgroundPrimary,
+                    unselectedIconColor = DeliveryTheme.colors.borderMedium,
+                    unselectedTextColor = DeliveryTheme.colors.borderMedium,
+                    disabledIconColor = DeliveryTheme.colors.borderLight,
+                    disabledTextColor = DeliveryTheme.colors.borderLight,
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun getIcon(option: NavigationOptions): Painter = painterResource(
+    when (option) {
+        NavigationOptions.CALCULATE_DELIVERY -> R.drawable.calculate
+        NavigationOptions.PROFILE -> R.drawable.user
+        NavigationOptions.HISTORY -> R.drawable.time
+    }
+)
+
+@Composable
+private fun getLabel(option: NavigationOptions): String = stringResource(
+    when (option) {
+        NavigationOptions.CALCULATE_DELIVERY -> R.string.calculation
+        NavigationOptions.PROFILE -> R.string.profile
+        NavigationOptions.HISTORY -> R.string.history
+    }
+)
 
 fun NavController.openPoppingAllPrevious(route: Any) {
     this.navigate(route) {
@@ -127,3 +248,4 @@ val DeliveryPointsType = object : NavType<DeliveryPoints>(
         return Json.decodeFromString<DeliveryPoints>(value)
     }
 }
+

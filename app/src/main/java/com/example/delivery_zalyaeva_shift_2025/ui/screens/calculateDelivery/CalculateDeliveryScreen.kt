@@ -1,7 +1,6 @@
 package com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -32,15 +31,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.delivery_zalyaeva_shift_2025.R
 import com.example.delivery_zalyaeva_shift_2025.domain.entity.DeliveryPoint
 import com.example.delivery_zalyaeva_shift_2025.domain.entity.PackageType
 import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryOptionsState
+import com.example.delivery_zalyaeva_shift_2025.presentation.OrderFindViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
 import com.example.delivery_zalyaeva_shift_2025.ui.components.Banner
 import com.example.delivery_zalyaeva_shift_2025.ui.components.BrandButton
 import com.example.delivery_zalyaeva_shift_2025.ui.components.BrandTextField
+import com.example.delivery_zalyaeva_shift_2025.ui.components.ErrorScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.components.LoadingScreen
 import com.example.delivery_zalyaeva_shift_2025.ui.components.Picker
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPointType
@@ -49,6 +51,7 @@ import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
 @Composable
 fun CalculateDeliveryScreen(
     orderViewModel: OrderViewModel,
+    orderFindViewModel: OrderFindViewModel,
     onSelectDeliveryPointClick: (DeliveryPointType, List<DeliveryPoint>) -> Unit,
     onCalculateClick: () -> Unit,
 ) {
@@ -56,9 +59,10 @@ fun CalculateDeliveryScreen(
 
     when (val currentState = deliveryOptionsState) {
         is DeliveryOptionsState.Loading -> LoadingScreen()
-        is DeliveryOptionsState.Error -> Log.e("", "")
+        is DeliveryOptionsState.Error -> ErrorScreen(stringResource(R.string.something_went_wrong)) { orderViewModel.getDeliveryOptions() }
         is DeliveryOptionsState.Content -> CalculateDelivery(
             orderViewModel = orderViewModel,
+            orderFindViewModel = orderFindViewModel,
             deliveryPoints = currentState.points,
             packageTypes = currentState.packageTypes,
             onSelectDeliveryPointClick = onSelectDeliveryPointClick,
@@ -71,6 +75,7 @@ fun CalculateDeliveryScreen(
 @Composable
 fun CalculateDelivery(
     orderViewModel: OrderViewModel,
+    orderFindViewModel: OrderFindViewModel,
     deliveryPoints: List<DeliveryPoint>,
     packageTypes: List<PackageType>,
     onSelectDeliveryPointClick: (DeliveryPointType, List<DeliveryPoint>) -> Unit,
@@ -78,7 +83,6 @@ fun CalculateDelivery(
 ) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-
 
     Column(
         modifier = Modifier
@@ -108,7 +112,7 @@ fun CalculateDelivery(
             onPackageSizeSelect = { showBottomSheet = true }
         )
 
-        FindPackageBox()
+        FindPackageBox(orderFindViewModel = orderFindViewModel)
 
         Banner(painterResource(R.drawable.banner1))
 
@@ -120,7 +124,8 @@ fun CalculateDelivery(
                 onPackageTypeSelect = { item ->
                     orderViewModel.setPackageType(item)
                     showBottomSheet = false
-                })
+                }
+            )
         }
     }
 }
@@ -134,6 +139,7 @@ fun CalculateDeliveryBox(
     onPackageSizeSelect: () -> Unit,
 ) {
     val orderState by orderViewModel.orderState.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -165,7 +171,10 @@ fun CalculateDeliveryBox(
                 deliveryPoints[0].name,
                 deliveryPoints[1].name,
                 deliveryPoints[2].name
-            )
+            ),
+            onVariantClick = { variantIndex ->
+                orderViewModel.setSenderDeliveryPoint(deliveryPoints[variantIndex])
+            }
         )
 
         Picker(
@@ -183,7 +192,10 @@ fun CalculateDeliveryBox(
                 deliveryPoints[1].name,
                 deliveryPoints[2].name,
                 deliveryPoints[3].name
-            )
+            ),
+            onVariantClick = { variantIndex ->
+                orderViewModel.setReceiverDeliveryPoint(deliveryPoints[variantIndex + 1])
+            }
         )
 
         Picker(
@@ -203,7 +215,9 @@ fun CalculateDeliveryBox(
 }
 
 @Composable
-fun FindPackageBox() {
+fun FindPackageBox(orderFindViewModel: OrderFindViewModel) {
+    var packageNumber by remember { mutableStateOf(TextFieldValue("")) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -219,9 +233,13 @@ fun FindPackageBox() {
             style = MaterialTheme.typography.titleMedium,
         )
 
-        BrandTextField("", {}, label = stringResource(R.string.order_number))
+        BrandTextField(
+            value = packageNumber,
+            onValueChange = { packageNumber = it },
+            label = stringResource(R.string.order_number)
+        )
 
-        BrandButton(stringResource(R.string.find_package_button), {})
+        BrandButton(stringResource(R.string.find_package_button), { orderFindViewModel.findOrder(packageNumber.text) })
     }
 }
 
