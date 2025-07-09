@@ -2,7 +2,6 @@ package com.example.delivery_zalyaeva_shift_2025.ui.main
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +34,7 @@ import androidx.navigation.toRoute
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.delivery_zalyaeva_shift_2025.R
+import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryCalculationViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderFindViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.history.HistoryRoute
@@ -59,6 +59,7 @@ import kotlin.reflect.typeOf
 fun DeliveryApp(
     orderViewModel: OrderViewModel = koinViewModel(),
     orderFindViewModel: OrderFindViewModel = koinViewModel(),
+    deliveryCalculationViewModel: DeliveryCalculationViewModel = koinViewModel()
 ) {
     val navController = rememberNavController()
     val selectedTab = rememberSaveable { mutableStateOf(NavigationOptions.CALCULATE_DELIVERY) }
@@ -87,6 +88,7 @@ fun DeliveryApp(
             ) {
                 animatedComposable<CalculateDeliveryRoute> {
                     CalculateDeliveryScreen(
+                        deliveryCalculationViewModel = deliveryCalculationViewModel,
                         orderViewModel = orderViewModel,
                         orderFindViewModel = orderFindViewModel,
                         onSelectDeliveryPointClick = { deliveryPointsType, deliveryPoints ->
@@ -112,7 +114,8 @@ fun DeliveryApp(
 
                 animatedComposable<DeliveryTypeRoute> {
                     DeliveryTypeScreen(
-                        viewModel = orderViewModel,
+                        deliveryCalculationViewModel = deliveryCalculationViewModel,
+                        orderViewModel = orderViewModel,
                         onCancelAction = { navController.navigateUp() }
                     )
                 }
@@ -156,11 +159,11 @@ fun DeliveryApp(
 }
 
 inline fun <reified T : Any> NavGraphBuilder.animatedComposable(
-    typeMap: Map<KType, @JvmSuppressWildcards NavType<*>>? = null,
+    typeMap: Map<KType, @JvmSuppressWildcards NavType<*>> = emptyMap(),
     noinline block: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
     composable<T>(
-        typeMap = typeMap ?: emptyMap(),
+        typeMap = typeMap,
         enterTransition = ENTER_TRANSITION,
         exitTransition = EXIT_TRANSITION,
         popEnterTransition = POP_ENTER_TRANSITION,

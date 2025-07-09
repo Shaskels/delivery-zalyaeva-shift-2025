@@ -1,6 +1,5 @@
 package com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.example.delivery_zalyaeva_shift_2025.R
 import com.example.delivery_zalyaeva_shift_2025.domain.entity.DeliveryPoint
 import com.example.delivery_zalyaeva_shift_2025.domain.entity.PackageType
+import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryCalculationViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryOptionsState
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderFindViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
@@ -50,6 +50,7 @@ import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
 
 @Composable
 fun CalculateDeliveryScreen(
+    deliveryCalculationViewModel: DeliveryCalculationViewModel,
     orderViewModel: OrderViewModel,
     orderFindViewModel: OrderFindViewModel,
     onSelectDeliveryPointClick: (DeliveryPointType, List<DeliveryPoint>) -> Unit,
@@ -61,6 +62,7 @@ fun CalculateDeliveryScreen(
         is DeliveryOptionsState.Loading -> LoadingScreen()
         is DeliveryOptionsState.Error -> ErrorScreen(stringResource(R.string.something_went_wrong)) { orderViewModel.getDeliveryOptions() }
         is DeliveryOptionsState.Content -> CalculateDelivery(
+            deliveryCalculationViewModel = deliveryCalculationViewModel,
             orderViewModel = orderViewModel,
             orderFindViewModel = orderFindViewModel,
             deliveryPoints = currentState.points,
@@ -74,6 +76,7 @@ fun CalculateDeliveryScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculateDelivery(
+    deliveryCalculationViewModel: DeliveryCalculationViewModel,
     orderViewModel: OrderViewModel,
     orderFindViewModel: OrderFindViewModel,
     deliveryPoints: List<DeliveryPoint>,
@@ -106,6 +109,7 @@ fun CalculateDelivery(
 
         CalculateDeliveryBox(
             deliveryPoints = deliveryPoints,
+            deliveryCalculationViewModel = deliveryCalculationViewModel,
             orderViewModel = orderViewModel,
             onSelectDeliveryPointClick = onSelectDeliveryPointClick,
             onCalculateClick = onCalculateClick,
@@ -114,7 +118,7 @@ fun CalculateDelivery(
 
         FindPackageBox(orderFindViewModel = orderFindViewModel)
 
-        Banner(painterResource(R.drawable.banner1))
+        Banner(banner = painterResource(R.drawable.banner1))
 
         if (showBottomSheet) {
             PackageTypeBottomSheet(
@@ -133,6 +137,7 @@ fun CalculateDelivery(
 @Composable
 fun CalculateDeliveryBox(
     deliveryPoints: List<DeliveryPoint>,
+    deliveryCalculationViewModel: DeliveryCalculationViewModel,
     orderViewModel: OrderViewModel,
     onSelectDeliveryPointClick: (DeliveryPointType, List<DeliveryPoint>) -> Unit,
     onCalculateClick: () -> Unit,
@@ -208,7 +213,7 @@ fun CalculateDeliveryBox(
         BrandButton(
             text = stringResource(R.string.calculate_button),
             onClick = {
-                orderViewModel.getDeliveryCalculations()
+                deliveryCalculationViewModel.getDeliveryCalculations(orderViewModel.orderState.value)
                 onCalculateClick()
             })
     }
@@ -297,4 +302,5 @@ fun PackageTypeItem(item: PackageType, onItemClick: () -> Unit) {
         )
     }
 }
+
 
