@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.example.delivery_zalyaeva_shift_2025.R
 import com.example.delivery_zalyaeva_shift_2025.domain.entity.Calculation
 import com.example.delivery_zalyaeva_shift_2025.domain.entity.DeliveryType
+import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryCalculationViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryCalculationsState
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
 import com.example.delivery_zalyaeva_shift_2025.ui.components.Banner
@@ -45,10 +46,11 @@ private const val NUMBER_OF_STEPS = 7
 
 @Composable
 fun DeliveryTypeScreen(
-    viewModel: OrderViewModel,
+    deliveryCalculationViewModel: DeliveryCalculationViewModel,
+    orderViewModel: OrderViewModel,
     onCancelAction: () -> Unit,
 ) {
-    val deliveryCalculationsState by viewModel.deliveryCalculations.observeAsState(
+    val deliveryCalculationsState by deliveryCalculationViewModel.deliveryCalculations.observeAsState(
         DeliveryCalculationsState.Loading
     )
 
@@ -62,13 +64,17 @@ fun DeliveryTypeScreen(
         when (val currentState = deliveryCalculationsState) {
             is DeliveryCalculationsState.Loading -> DeliveryType(
                 isLoading = true,
-                viewModel = viewModel,
+                orderViewModel = orderViewModel,
                 emptyList(),
             )
-            is DeliveryCalculationsState.Error -> ErrorScreen(stringResource(R.string.something_went_wrong)) { viewModel.getDeliveryCalculations() }
+
+            is DeliveryCalculationsState.Error -> ErrorScreen(stringResource(R.string.something_went_wrong)) {
+                deliveryCalculationViewModel.getDeliveryCalculations(orderViewModel.orderState.value)
+            }
+
             is DeliveryCalculationsState.Content -> DeliveryType(
                 isLoading = false,
-                viewModel = viewModel,
+                orderViewModel = orderViewModel,
                 currentState.calculations,
             )
         }
@@ -79,7 +85,7 @@ fun DeliveryTypeScreen(
 @Composable
 fun DeliveryType(
     isLoading: Boolean,
-    viewModel: OrderViewModel,
+    orderViewModel: OrderViewModel,
     calculations: List<Calculation>,
 ) {
     Column(
@@ -99,9 +105,9 @@ fun DeliveryType(
             LazyColumn(modifier = Modifier.padding(bottom = 24.dp)) {
                 items(calculations) { item ->
                     CalculationItem(
-                        item,
+                        item = item,
                         onItemClick = { deliveryType ->
-                            viewModel.setDeliveryType(
+                            orderViewModel.setDeliveryType(
                                 deliveryType
                             )
                         }

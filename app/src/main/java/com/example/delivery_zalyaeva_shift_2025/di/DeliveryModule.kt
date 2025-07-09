@@ -11,6 +11,7 @@ import com.example.delivery_zalyaeva_shift_2025.domain.usecase.GetPackageTypesUs
 import com.example.delivery_zalyaeva_shift_2025.domain.usecase.CalculateCostUseCase
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
 import com.example.delivery_zalyaeva_shift_2025.presentation.OrderFindViewModel
+import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryCalculationViewModel
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -29,4 +30,5 @@ val deliveryModule = module {
 
     viewModelOf(::OrderViewModel)
     viewModelOf(::OrderFindViewModel)
+    viewModelOf(::DeliveryCalculationViewModel)
 }
