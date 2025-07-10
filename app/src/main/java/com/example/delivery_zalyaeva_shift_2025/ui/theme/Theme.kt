@@ -38,7 +38,10 @@ private val DarkColorScheme = DeliveryColors(
     indicatorFocused = IndicatorFocused,
     indicatorFocusedAlternative = IndicatorFocusedAlternative,
     backgroundOverlay = BackgroundOverlay,
-    backgroundLight = BackgroundLight
+    backgroundLight = BackgroundLight,
+    banner1Colors = listOf(Banner1GradientColor2, Banner1GradientColor1),
+    banner2Colors = listOf(Banner2GradientColor2, Banner2GradientColor1),
+    textInvertLight = TextInvertLight,
 )
 
 private val LightColorScheme = DeliveryColors(
@@ -71,6 +74,9 @@ private val LightColorScheme = DeliveryColors(
     indicatorFocusedAlternative = IndicatorFocusedAlternative,
     backgroundOverlay = BackgroundOverlay,
     backgroundLight = BackgroundLight,
+    banner1Colors = listOf(Banner1GradientColor2, Banner1GradientColor1),
+    banner2Colors = listOf(Banner2GradientColor2, Banner2GradientColor1),
+    textInvertLight = TextInvertLight
 )
 
 @Composable
@@ -125,7 +131,10 @@ data class DeliveryColors(
     val indicatorFocused: Color,
     val indicatorFocusedAlternative: Color,
     val backgroundOverlay: Color,
-    val backgroundLight: Color
+    val backgroundLight: Color,
+    val banner1Colors: List<Color>,
+    val banner2Colors: List<Color>,
+    val textInvertLight: Color,
 )
 
 @Composable

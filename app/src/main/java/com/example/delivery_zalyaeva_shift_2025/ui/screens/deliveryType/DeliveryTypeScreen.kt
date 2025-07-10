@@ -122,7 +122,11 @@ fun DeliveryType(
             }
         }
 
-        Banner(banner = painterResource(R.drawable.banner2))
+        Banner(
+            title = stringResource(R.string.banner2_title),
+            text = stringResource(R.string.banner2_text),
+            colors = DeliveryTheme.colors.banner2Colors
+        )
     }
 }
 

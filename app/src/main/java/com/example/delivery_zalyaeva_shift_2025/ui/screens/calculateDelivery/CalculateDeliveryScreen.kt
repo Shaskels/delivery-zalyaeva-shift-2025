@@ -122,7 +122,11 @@ fun CalculateDelivery(
 
         FindPackageBox(orderFindViewModel = orderFindViewModel)
 
-        Banner(banner = painterResource(R.drawable.banner1))
+        Banner(
+            title = stringResource(R.string.banner1_title),
+            text = stringResource(R.string.banner1_text),
+            colors = DeliveryTheme.colors.banner1Colors
+        )
 
         if (showBottomSheet) {
             PackageTypeBottomSheet(
