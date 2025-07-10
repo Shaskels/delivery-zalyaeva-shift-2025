@@ -18,7 +18,9 @@ fun ErrorScreen(message: String, onRetry: () -> Unit) {
 
     if (openAlertDialog.value) {
         AlertDialog(
-            onDismissRequest = { openAlertDialog.value = false },
+            onDismissRequest = {
+                onRetry()
+            },
             title = {
                 Text(
                     text = stringResource(id = R.string.error_title),

@@ -20,7 +20,6 @@ fun BrandButton(text: String, onClick: () -> Unit){
     Button(
         onClick = onClick,
         modifier = Modifier
-            .padding(top = 24.dp)
             .fillMaxWidth(),
         enabled = true,
         shape = RoundedCornerShape(16.dp),

@@ -34,6 +34,7 @@ fun DeliveryPointsScreen(
     Column(modifier = Modifier
         .fillMaxSize()
         .background(DeliveryTheme.colors.backgroundPrimary)) {
+
         DeliveryTopAppBar(
             title = when (deliveryPoints.deliveryPointsType) {
                 DeliveryPointType.RECEIVER_DELIVERY -> stringResource(R.string.delivery_points_where)
@@ -77,7 +78,7 @@ fun DeliveryPointItem(
             .clickable {
                 onItemClick()
             }
-            .padding(vertical = 16.dp, horizontal = 16.dp)
+            .padding(16.dp)
     ) {
         Text(
             item.name,

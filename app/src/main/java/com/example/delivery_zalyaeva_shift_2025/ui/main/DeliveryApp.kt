@@ -5,6 +5,8 @@ import android.os.Bundle
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -63,6 +65,7 @@ fun DeliveryApp(
 ) {
     val navController = rememberNavController()
     val selectedTab = rememberSaveable { mutableStateOf(NavigationOptions.CALCULATE_DELIVERY) }
+    val isDestinationTab = rememberSaveable { mutableStateOf(true) }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     LaunchedEffect(key1 = Unit) {
@@ -72,8 +75,9 @@ fun DeliveryApp(
                 NavigationOptions.entries.firstOrNull { destination.hasRoute(it.route) }
 
             if (openedOption != null) {
+                isDestinationTab.value = true
                 selectedTab.value = openedOption
-            }
+            } else isDestinationTab.value = false
         }
     }
 
@@ -129,10 +133,7 @@ fun DeliveryApp(
                 }
             }
 
-            val currentDestination = navBackStackEntry?.destination
-            val openedOption =
-                NavigationOptions.entries.firstOrNull { currentDestination?.hasRoute(it.route) == true }
-            if (openedOption != null) {
+            if (isDestinationTab.value) {
                 BottomNavigation(
                     navigationOptions = NavigationOptions.entries,
                     selectedNavigationOption = selectedTab.value,
