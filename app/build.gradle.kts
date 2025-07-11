@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
-    id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -45,6 +45,15 @@ android {
 }
 
 dependencies {
+    implementation(project(":component:theme"))
+    implementation(project(":component:components"))
+    implementation(project(":shared:calculation"))
+    implementation(project(":util:list"))
+    implementation(project(":feature:history"))
+    implementation(project(":feature:profile"))
+    implementation(project(":feature:findPackage"))
+    implementation(project(":feature:calculateDelivery"))
+    implementation(project(":feature:calculation"))
 
     //koin
     implementation(platform(libs.koin.bom))
@@ -53,7 +62,7 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-    //retrofit
+//    retrofit
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

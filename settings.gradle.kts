@@ -21,4 +21,12 @@ dependencyResolutionManagement {
 
 rootProject.name = "delivery-zalyaeva-shift-2025"
 include(":app")
- 
+include(":component:theme")
+include(":component:components")
+include(":shared:calculation")
+include(":util:list")
+include(":feature:history")
+include(":feature:profile")
+include(":feature:findPackage")
+include(":feature:calculateDelivery")
+include(":feature:calculation")

@@ -15,7 +15,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -32,23 +31,23 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.delivery_zalyaeva_shift_2025.R
-import com.example.delivery_zalyaeva_shift_2025.presentation.DeliveryCalculationViewModel
-import com.example.delivery_zalyaeva_shift_2025.presentation.OrderFindViewModel
-import com.example.delivery_zalyaeva_shift_2025.presentation.OrderViewModel
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.history.HistoryRoute
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.profile.ProfileRoute
+import com.example.delivery_zalyaeva_shift_2025.shared.calculation.presentation.OrderViewModel
+import com.example.delivery_zalyaeva_shift_2025.feature.history.ui.HistoryScreen
+import com.example.delivery_zalyaeva_shift_2025.feature.history.HistoryRoute
+import com.example.delivery_zalyaeva_shift_2025.feature.profile.ProfileRoute
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery.CalculateDeliveryRoute
 import com.example.delivery_zalyaeva_shift_2025.ui.screens.calculateDelivery.CalculateDeliveryScreen
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPoints
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPointsRoute
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryPoints.DeliveryPointsScreen
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryType.DeliveryTypeRoute
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.deliveryType.DeliveryTypeScreen
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.history.HistoryScreen
-import com.example.delivery_zalyaeva_shift_2025.ui.screens.profile.ProfileScreen
-import com.example.delivery_zalyaeva_shift_2025.ui.theme.DeliveryTheme
+import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.ui.DeliveryPoints
+import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.DeliveryPointsRoute
+import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.presentation.DeliveryOptionsViewModel
+import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.ui.DeliveryPointsScreen
+import com.example.delivery_zalyaeva_shift_2025.feature.calculation.DeliveryTypeRoute
+import com.example.delivery_zalyaeva_shift_2025.feature.calculation.presentation.DeliveryCalculationViewModel
+import com.example.delivery_zalyaeva_shift_2025.feature.calculation.ui.DeliveryTypeScreen
+import com.example.delivery_zalyaeva_shift_2025.feature.findPackage.presentation.PackageFindViewModel
+import com.example.delivery_zalyaeva_shift_2025.feature.profile.ui.ProfileScreen
+import com.example.delivery_zalyaeva_shift_2025.theme.DeliveryTheme
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.androidx.compose.koinViewModel
@@ -58,22 +57,24 @@ import kotlin.reflect.typeOf
 @Composable
 fun DeliveryApp(
     orderViewModel: OrderViewModel = koinViewModel(),
-    orderFindViewModel: OrderFindViewModel = koinViewModel(),
+    deliveryOptionsViewModel: DeliveryOptionsViewModel = koinViewModel(),
+    packageFindViewModel: PackageFindViewModel = koinViewModel(),
     deliveryCalculationViewModel: DeliveryCalculationViewModel = koinViewModel()
 ) {
     val navController = rememberNavController()
     val selectedTab = rememberSaveable { mutableStateOf(NavigationOptions.CALCULATE_DELIVERY) }
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val isDestinationTab = rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(key1 = Unit) {
-        orderViewModel.getDeliveryOptions()
+        deliveryOptionsViewModel.getDeliveryOptions()
         navController.addOnDestinationChangedListener { _, destination, _ ->
             val openedOption =
                 NavigationOptions.entries.firstOrNull { destination.hasRoute(it.route) }
 
             if (openedOption != null) {
+                isDestinationTab.value = true
                 selectedTab.value = openedOption
-            }
+            } else isDestinationTab.value = false
         }
     }
 
@@ -88,9 +89,9 @@ fun DeliveryApp(
             ) {
                 animatedComposable<CalculateDeliveryRoute> {
                     CalculateDeliveryScreen(
-                        deliveryCalculationViewModel = deliveryCalculationViewModel,
+                        deliveryOptionsViewModel = deliveryOptionsViewModel,
                         orderViewModel = orderViewModel,
-                        orderFindViewModel = orderFindViewModel,
+                        packageFindViewModel = packageFindViewModel,
                         onSelectDeliveryPointClick = { deliveryPointsType, deliveryPoints ->
                             navController.navigate(
                                 DeliveryPointsRoute(
@@ -98,7 +99,10 @@ fun DeliveryApp(
                                 )
                             )
                         },
-                        onCalculateClick = { navController.navigate(DeliveryTypeRoute) }
+                        onCalculateClick = {
+                            deliveryCalculationViewModel.getDeliveryCalculations(orderViewModel.orderState.value)
+                            navController.navigate(DeliveryTypeRoute)
+                        }
                     )
                 }
 
@@ -108,7 +112,9 @@ fun DeliveryApp(
                         deliveryPoints = destination.deliveryPoints,
                         viewModel = orderViewModel,
                         onCancelAction = { navController.navigateUp() },
-                        onDeliveryPointClick = { navController.navigateUp() }
+                        onDeliveryPointClick = {
+                            navController.navigateUp()
+                        }
                     )
                 }
 
@@ -129,10 +135,7 @@ fun DeliveryApp(
                 }
             }
 
-            val currentDestination = navBackStackEntry?.destination
-            val openedOption =
-                NavigationOptions.entries.firstOrNull { currentDestination?.hasRoute(it.route) == true }
-            if (openedOption != null) {
+            if (isDestinationTab.value) {
                 BottomNavigation(
                     navigationOptions = NavigationOptions.entries,
                     selectedNavigationOption = selectedTab.value,
