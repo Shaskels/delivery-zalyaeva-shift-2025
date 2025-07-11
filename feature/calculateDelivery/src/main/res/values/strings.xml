@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delivery_points_from">Откуда</string>
+    <string name="delivery_points_where">Куда</string>
+</resources>
