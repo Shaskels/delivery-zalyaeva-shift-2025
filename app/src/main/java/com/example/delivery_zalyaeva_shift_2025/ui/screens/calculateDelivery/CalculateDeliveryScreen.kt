@@ -20,7 +20,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -48,6 +47,7 @@ import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.presen
 import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.presentation.DeliveryOptionsViewModel
 import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.ui.DeliveryPointType
 import com.example.delivery_zalyaeva_shift_2025.feature.findPackage.presentation.PackageFindViewModel
+import com.example.delivery_zalyaeva_shift_2025.shared.calculation.presentation.Order
 import com.example.delivery_zalyaeva_shift_2025.theme.DeliveryTheme
 import com.example.delivery_zalyaeva_shift_2025.util.list.getElements
 
@@ -61,7 +61,6 @@ fun CalculateDeliveryScreen(
     onSelectDeliveryPointClick: (DeliveryPointType, List<DeliveryPoint>) -> Unit,
     onCalculateClick: () -> Unit,
 ) {
-
     val deliveryOptionsState by deliveryOptionsViewModel.deliveryOptions.observeAsState(
         DeliveryOptionsState.Loading
     )
@@ -73,9 +72,14 @@ fun CalculateDeliveryScreen(
             onRetry = { deliveryOptionsViewModel.getDeliveryOptions() })
 
         is DeliveryOptionsState.Content -> {
-            orderViewModel.setSenderDeliveryPoint(currentState.points.firstOrNull())
-            orderViewModel.setReceiverDeliveryPoint(currentState.points.getOrNull(1))
-            orderViewModel.setPackageType(currentState.packageTypes.firstOrNull())
+            orderViewModel.initOrder(
+                Order(
+                    senderDelivery = currentState.points.firstOrNull(),
+                    receiverDelivery = currentState.points.getOrNull(1),
+                    packageType = currentState.packageTypes.firstOrNull(),
+                    deliveryType = null
+                )
+            )
             CalculateDelivery(
                 orderViewModel = orderViewModel,
                 packageFindViewModel = packageFindViewModel,
@@ -180,7 +184,7 @@ fun CalculateDeliveryBox(
 
         Picker(
             title = stringResource(R.string.sender_city),
-            hint = orderState.senderDelivery?.name ?: stringResource(R.string.sender_city),
+            hint = orderState.senderDelivery?.name ?: stringResource(R.string.sender_city_hint),
             icon = painterResource(R.drawable.marker),
             onClick = {
                 onSelectDeliveryPointClick(
