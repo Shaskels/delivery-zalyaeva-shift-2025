@@ -69,17 +69,15 @@ fun CalculateDeliveryScreen(
         is DeliveryOptionsState.Loading -> LoadingScreen()
         is DeliveryOptionsState.Error -> ErrorScreen(
             message = stringResource(R.string.something_went_wrong),
-            onRetry = { deliveryOptionsViewModel.getDeliveryOptions() })
-
+            onRetry = { deliveryOptionsViewModel.getDeliveryOptions() }
+        )
         is DeliveryOptionsState.Content -> {
-            orderViewModel.initOrder(
-                Order(
-                    senderDelivery = currentState.points.firstOrNull(),
-                    receiverDelivery = currentState.points.getOrNull(1),
-                    packageType = currentState.packageTypes.firstOrNull(),
-                    deliveryType = null
-                )
-            )
+            if (orderViewModel.isInitial) {
+                orderViewModel.setSenderDeliveryPoint(currentState.points.firstOrNull())
+                orderViewModel.setReceiverDeliveryPoint(currentState.points.getOrNull(1))
+                orderViewModel.setPackageType(currentState.packageTypes.firstOrNull())
+            }
+
             CalculateDelivery(
                 orderViewModel = orderViewModel,
                 packageFindViewModel = packageFindViewModel,
@@ -253,8 +251,8 @@ fun FindPackageBox(packageFindViewModel: PackageFindViewModel) {
         )
 
         BrandTextField(
-            value = packageNumber,
-            onValueChange = { packageNumber = it },
+            text = packageNumber,
+            onTextChange = { packageNumber = it },
             label = stringResource(R.string.order_number)
         )
 

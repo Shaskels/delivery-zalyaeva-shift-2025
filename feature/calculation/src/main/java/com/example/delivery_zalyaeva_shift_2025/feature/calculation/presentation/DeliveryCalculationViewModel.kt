@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class DeliveryCalculationViewModel(
     private val calculateCostUseCase: com.example.delivery_zalyaeva_shift_2025.feature.calculation.domain.usecase.CalculateCostUseCase
-): ViewModel() {
+) : ViewModel() {
 
     private val _deliveryCalculations = MutableLiveData<DeliveryCalculationsState>()
     val deliveryCalculations: LiveData<DeliveryCalculationsState> = _deliveryCalculations
@@ -23,21 +23,17 @@ class DeliveryCalculationViewModel(
             _deliveryCalculations.value = DeliveryCalculationsState.Error
         }
         viewModelScope.launch(handler) {
-            val calculations =
-                if (order.packageType != null
-                    && order.senderDelivery != null
-                    && order.receiverDelivery != null
-                ) {
-                    calculateCostUseCase(
-                        order.packageType!!,
-                        order.senderDelivery!!,
-                        order.receiverDelivery!!,
-                    )
-                } else emptyList()
-            if (calculations.isEmpty())
-                _deliveryCalculations.value = DeliveryCalculationsState.Error
-            else
+            if (order.packageType != null
+                && order.senderDelivery != null
+                && order.receiverDelivery != null
+            ) {
+                val calculations = calculateCostUseCase(
+                    order.packageType!!,
+                    order.senderDelivery!!,
+                    order.receiverDelivery!!,
+                )
                 _deliveryCalculations.value = DeliveryCalculationsState.Content(calculations)
+            } else _deliveryCalculations.value = DeliveryCalculationsState.Error
         }
     }
 }

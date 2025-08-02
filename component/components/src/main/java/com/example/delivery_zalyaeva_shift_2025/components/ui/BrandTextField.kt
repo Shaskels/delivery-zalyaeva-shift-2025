@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.example.delivery_zalyaeva_shift_2025.theme.DeliveryTheme
 
 @Composable
-fun BrandTextField(value: String,onValueChange: (String)-> Unit, label: String) {
+fun BrandTextField(text: String,onTextChange: (String)-> Unit, label: String) {
     OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
+        value = text,
+        onValueChange = onTextChange,
         label = {
             Text(
                 text = label,

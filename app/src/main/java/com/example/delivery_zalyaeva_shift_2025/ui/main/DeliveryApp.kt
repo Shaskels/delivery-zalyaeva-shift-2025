@@ -43,8 +43,10 @@ import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.Delive
 import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.presentation.DeliveryOptionsViewModel
 import com.example.delivery_zalyaeva_shift_2025.feature.calculateDelivery.ui.DeliveryPointsScreen
 import com.example.delivery_zalyaeva_shift_2025.feature.calculation.DeliveryTypeRoute
+import com.example.delivery_zalyaeva_shift_2025.feature.calculation.ReceiverDataRoute
 import com.example.delivery_zalyaeva_shift_2025.feature.calculation.presentation.DeliveryCalculationViewModel
 import com.example.delivery_zalyaeva_shift_2025.feature.calculation.ui.DeliveryTypeScreen
+import com.example.delivery_zalyaeva_shift_2025.feature.calculation.ui.ReceiverDataScreen
 import com.example.delivery_zalyaeva_shift_2025.feature.findPackage.presentation.PackageFindViewModel
 import com.example.delivery_zalyaeva_shift_2025.feature.profile.ui.ProfileScreen
 import com.example.delivery_zalyaeva_shift_2025.theme.DeliveryTheme
@@ -100,7 +102,6 @@ fun DeliveryApp(
                             )
                         },
                         onCalculateClick = {
-                            deliveryCalculationViewModel.getDeliveryCalculations(orderViewModel.orderState.value)
                             navController.navigate(DeliveryTypeRoute)
                         }
                     )
@@ -112,9 +113,7 @@ fun DeliveryApp(
                         deliveryPoints = destination.deliveryPoints,
                         viewModel = orderViewModel,
                         onCancelAction = { navController.navigateUp() },
-                        onDeliveryPointClick = {
-                            navController.navigateUp()
-                        }
+                        onDeliveryPointClick = { navController.navigateUp() }
                     )
                 }
 
@@ -122,7 +121,16 @@ fun DeliveryApp(
                     DeliveryTypeScreen(
                         deliveryCalculationViewModel = deliveryCalculationViewModel,
                         orderViewModel = orderViewModel,
+                        onTypeClick = { navController.navigate(ReceiverDataRoute) },
                         onCancelAction = { navController.navigateUp() }
+                    )
+                }
+
+                animatedComposable<ReceiverDataRoute> {
+                    ReceiverDataScreen(
+                        orderViewModel = orderViewModel,
+                        onBackClick = { navController.navigateUp() },
+                        onContinueClick = {  }
                     )
                 }
 

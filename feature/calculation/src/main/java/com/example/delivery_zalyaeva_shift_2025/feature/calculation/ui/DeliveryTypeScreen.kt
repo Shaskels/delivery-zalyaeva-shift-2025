@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.delivery_zalyaeva_shift_2025.components.ui.Banner
 import com.example.delivery_zalyaeva_shift_2025.components.ui.DeliveryTopAppBar
+import com.example.delivery_zalyaeva_shift_2025.components.ui.ErrorScreen
 import com.example.delivery_zalyaeva_shift_2025.shared.calculation.domain.entity.Calculation
 import com.example.delivery_zalyaeva_shift_2025.shared.calculation.domain.entity.DeliveryType
 import com.example.delivery_zalyaeva_shift_2025.shared.calculation.presentation.OrderViewModel
@@ -47,11 +49,16 @@ private const val NUMBER_OF_STEPS = 7
 fun DeliveryTypeScreen(
     deliveryCalculationViewModel: DeliveryCalculationViewModel,
     orderViewModel: OrderViewModel,
+    onTypeClick: () -> Unit,
     onCancelAction: () -> Unit,
 ) {
     val deliveryCalculationsState by deliveryCalculationViewModel.deliveryCalculations.observeAsState(
         DeliveryCalculationsState.Loading
     )
+
+    LaunchedEffect(key1 = Unit) {
+        deliveryCalculationViewModel.getDeliveryCalculations(orderViewModel.orderState.value)
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         DeliveryTopAppBar(
@@ -67,11 +74,12 @@ fun DeliveryTypeScreen(
                 emptyList(),
             )
 
-            is DeliveryCalculationsState.Error -> com.example.delivery_zalyaeva_shift_2025.components.ui.ErrorScreen(
-                stringResource(R.string.something_went_wrong)
-            ) {
-                deliveryCalculationViewModel.getDeliveryCalculations(orderViewModel.orderState.value)
-            }
+            is DeliveryCalculationsState.Error -> ErrorScreen(
+                message = stringResource(R.string.something_went_wrong),
+                onRetry = {
+                    deliveryCalculationViewModel.getDeliveryCalculations(orderViewModel.orderState.value)
+                }
+            )
 
             is DeliveryCalculationsState.Content -> DeliveryType(
                 isLoading = false,
