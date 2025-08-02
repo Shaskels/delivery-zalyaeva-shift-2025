@@ -1,6 +1,5 @@
 package com.example.delivery_zalyaeva_shift_2025.shared.calculation.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.delivery_zalyaeva_shift_2025.shared.calculation.domain.entity.DeliveryPoint
 import com.example.delivery_zalyaeva_shift_2025.shared.calculation.domain.entity.DeliveryType
@@ -9,21 +8,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class OrderViewModel: ViewModel() {
+class OrderViewModel : ViewModel() {
 
-    private var isInitial = true
-    private val _orderState = MutableStateFlow(Order(null, null, null, null))
+    private var _isInitial = true
+    val isInitial = _isInitial
+    private val _orderState = MutableStateFlow(
+        Order(null, null, null, null, null)
+    )
     val orderState = _orderState.asStateFlow()
 
-    fun initOrder(order: Order){
-        if (isInitial) {
-            _orderState.value = order
-        }
-        isInitial = false
-    }
-
     fun setSenderDeliveryPoint(deliveryPoint: DeliveryPoint?) {
-        Log.d("order", deliveryPoint.toString())
+        _isInitial = false
         _orderState.update { currentState ->
             currentState.copy(
                 senderDelivery = deliveryPoint
@@ -32,6 +27,7 @@ class OrderViewModel: ViewModel() {
     }
 
     fun setReceiverDeliveryPoint(deliveryPoint: DeliveryPoint?) {
+        _isInitial = false
         _orderState.update { currentState ->
             currentState.copy(
                 receiverDelivery = deliveryPoint
@@ -40,6 +36,7 @@ class OrderViewModel: ViewModel() {
     }
 
     fun setPackageType(packageType: PackageType?) {
+        _isInitial = false
         _orderState.update { currentState ->
             currentState.copy(
                 packageType = packageType
@@ -48,9 +45,19 @@ class OrderViewModel: ViewModel() {
     }
 
     fun setDeliveryType(deliveryType: DeliveryType?) {
+        _isInitial = false
         _orderState.update { currentState ->
             currentState.copy(
                 deliveryType = deliveryType
+            )
+        }
+    }
+
+    fun setReceiverData(client: Client) {
+        _isInitial = false
+        _orderState.update { currentState ->
+            currentState.copy(
+                receiverData = client
             )
         }
     }

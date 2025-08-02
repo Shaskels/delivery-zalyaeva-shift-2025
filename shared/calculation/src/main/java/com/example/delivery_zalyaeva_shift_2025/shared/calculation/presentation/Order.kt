@@ -9,4 +9,5 @@ data class Order(
     val receiverDelivery: DeliveryPoint?,
     val packageType: PackageType?,
     val deliveryType: DeliveryType?,
+    val receiverData: Client?,
 )
